@@ -1,0 +1,30 @@
+#!/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+export DISPLAY=:0.0
+x=`acpi |cut -f4 -d' '|cut -f1 -d'%'`
+if [ $x -le 20 ]
+	then
+		su "$users" -c    " notify-send 'Battery Saver' ' Battery Is Empty' -i /usr/share/icons/Adwaita/48x48/status/battery-empty.png"
+		c=0
+		while [ $c -ne 10 ]
+		do
+      			play -n synth 0.3 tri  1000.0 tri 1000.0
+      			sleep 0.2
+      			c=$((c+1))
+		done
+		play -n synth 2 tri  1000.0 tri 1000.0
+		pm-hibernate
+		if [ $? -ne 0 ]
+			then
+				init 0
+		fi
+	elif	[ $x -eq 40 ]
+	then
+		su "$users" -c    " notify-send 'Battery Saver' 'Battery  40%' -i /usr/share/icons/Adwaita/48x48/status/battery-low.png"
+		play -n synth 0.3 tri  1000.0 tri 1000.0
+		sleep 500
+
+	else
+		echo " nice "
+fi
+
